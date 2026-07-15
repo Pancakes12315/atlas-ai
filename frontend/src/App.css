@@ -1087,3 +1087,78 @@ body {
     rgba(74,222,128,0.15);
 
 }
+
+/* =========================
+   Search Analysis Animation
+========================= */
+
+
+.analysis-steps {
+
+  margin-top: 24px;
+
+  padding-top: 16px;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+
+}
+
+
+
+.analysis-steps p {
+
+  color: #cbd5e1;
+
+  margin: 12px 0;
+
+  font-size: 15px;
+
+  animation: fadeStep 0.4s ease;
+
+}
+
+
+
+.analysis-steps p:first-child {
+
+  color: white;
+
+}
+
+
+
+@keyframes fadeStep {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(6px);
+
+  }
+
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
+
+}
+
+
+
+/* Search button loading state */
+
+
+.search-box button:disabled {
+
+  opacity: 0.7;
+
+  cursor: not-allowed;
+
+  transform: none;
+
+}

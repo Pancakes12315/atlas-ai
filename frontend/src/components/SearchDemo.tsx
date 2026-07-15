@@ -1,30 +1,7 @@
 import { useState } from "react";
 
 
-type Source = {
-  name: string;
-  detail: string;
-};
-
-
-type SearchResult = {
-
-  answer: string;
-
-  confidence: number;
-
-  sources: Source[];
-
-  reasoning: string[];
-
-  recommendations: string[];
-
-};
-
-
-
-const defaultResult: SearchResult = {
-
+const defaultResult = {
 
   answer:
     "The Q3 marketing strategy focuses on improving customer acquisition, expanding enterprise partnerships, and increasing product adoption.",
@@ -78,17 +55,15 @@ const defaultResult: SearchResult = {
 
 
 
-const processingSteps = [
+const analysisSteps = [
 
   "Searching company documents",
 
-  "Comparing relevant sources",
+  "Comparing related knowledge",
 
-  "Generating AI response",
+  "Generating contextual answer",
 
 ];
-
-
 
 
 
@@ -100,20 +75,13 @@ function SearchDemo() {
   );
 
 
-  const [result, setResult] =
-    useState<SearchResult>(defaultResult);
+  const [result, setResult] = useState(defaultResult);
 
 
-
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
 
-
-  const [completedSteps, setCompletedSteps] =
-    useState<number[]>([]);
-
-
+  const [step, setStep] = useState(0);
 
 
 
@@ -122,33 +90,37 @@ function SearchDemo() {
 
     setLoading(true);
 
-    setCompletedSteps([]);
+    setStep(0);
 
 
 
-    processingSteps.forEach((_, index) => {
+    const interval = setInterval(() => {
 
 
-      setTimeout(() => {
+      setStep((current) => {
 
 
-        setCompletedSteps((previous) => [
+        if (current < analysisSteps.length - 1) {
 
-          ...previous,
+          return current + 1;
 
-          index,
-
-        ]);
+        }
 
 
-      }, (index + 1) * 400);
+        return current;
+
+      });
 
 
-    });
+    }, 400);
 
 
 
     setTimeout(() => {
+
+
+      clearInterval(interval);
+
 
 
       setResult({
@@ -175,7 +147,6 @@ function SearchDemo() {
         ],
 
 
-
         reasoning: [
 
           "Analyzed semantic similarity between documents",
@@ -185,7 +156,6 @@ function SearchDemo() {
           "Ranked the most relevant information",
 
         ],
-
 
 
         recommendations: [
@@ -205,13 +175,10 @@ function SearchDemo() {
       setLoading(false);
 
 
-
-    }, 1600);
+    }, 1800);
 
 
   };
-
-
 
 
 
@@ -238,7 +205,6 @@ function SearchDemo() {
 
 
 
-
       <div className="search-box">
 
 
@@ -256,15 +222,20 @@ function SearchDemo() {
 
 
 
-        <button onClick={handleSearch}>
+        <button
 
-          Search
+          onClick={handleSearch}
+
+          disabled={loading}
+
+        >
+
+          {loading ? "Searching..." : "Search"}
 
         </button>
 
 
       </div>
-
 
 
 
@@ -275,43 +246,36 @@ function SearchDemo() {
         {loading ? (
 
 
-          <div className="ai-loading">
-
+          <>
 
             <h3>
-              Atlas AI is analyzing...
+              Atlas AI is analyzing your knowledge base...
             </h3>
 
 
 
-            {processingSteps.map((step, index) => (
+            <div className="analysis-steps">
 
 
-              <p key={step}>
+              {analysisSteps.map((item, index) => (
+
+                <p key={item}>
+
+                  {index <= step ? "✓" : "○"}
+
+                  {" "}
+
+                  {item}
+
+                </p>
+
+              ))}
 
 
-                {completedSteps.includes(index)
-
-                  ? "✓"
-
-                  : "○"
-
-                }
+            </div>
 
 
-                {" "}
-
-                {step}
-
-
-              </p>
-
-
-            ))}
-
-
-
-          </div>
+          </>
 
 
         ) : (
@@ -325,11 +289,9 @@ function SearchDemo() {
             </h3>
 
 
-
             <p>
               {result.answer}
             </p>
-
 
 
 
@@ -353,7 +315,6 @@ function SearchDemo() {
 
 
 
-
             <div className="sources">
 
 
@@ -365,31 +326,23 @@ function SearchDemo() {
 
               {result.sources.map((source) => (
 
-
                 <div key={source.name}>
-
 
                   📄 <strong>{source.name}</strong>
 
-
                   <br />
-
 
                   <span>
                     {source.detail}
                   </span>
 
-
                 </div>
-
 
               ))}
 
 
+
             </div>
-
-
-
 
 
 
@@ -406,20 +359,16 @@ function SearchDemo() {
 
               {result.reasoning.map((item) => (
 
-
                 <div key={item}>
 
                   ✓ {item}
 
                 </div>
 
-
               ))}
 
 
             </div>
-
-
 
 
 
@@ -438,18 +387,13 @@ function SearchDemo() {
 
               {result.recommendations.map((item) => (
 
-
                 <div key={item}>
 
                   →
-
                   {" "}
-
                   {item}
 
-
                 </div>
-
 
               ))}
 
@@ -469,10 +413,10 @@ function SearchDemo() {
 
     </section>
 
-
   );
 
 }
+
 
 
 export default SearchDemo;
