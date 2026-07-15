@@ -1,7 +1,30 @@
 import { useState } from "react";
 
 
-const defaultResult = {
+type Source = {
+  name: string;
+  detail: string;
+};
+
+
+type SearchResult = {
+
+  answer: string;
+
+  confidence: number;
+
+  sources: Source[];
+
+  reasoning: string[];
+
+  recommendations: string[];
+
+};
+
+
+
+const defaultResult: SearchResult = {
+
 
   answer:
     "The Q3 marketing strategy focuses on improving customer acquisition, expanding enterprise partnerships, and increasing product adoption.",
@@ -55,6 +78,20 @@ const defaultResult = {
 
 
 
+const processingSteps = [
+
+  "Searching company documents",
+
+  "Comparing relevant sources",
+
+  "Generating AI response",
+
+];
+
+
+
+
+
 function SearchDemo() {
 
 
@@ -63,10 +100,20 @@ function SearchDemo() {
   );
 
 
-  const [result, setResult] = useState(defaultResult);
+  const [result, setResult] =
+    useState<SearchResult>(defaultResult);
 
 
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
+
+
+
+  const [completedSteps, setCompletedSteps] =
+    useState<number[]>([]);
+
+
 
 
 
@@ -74,6 +121,31 @@ function SearchDemo() {
 
 
     setLoading(true);
+
+    setCompletedSteps([]);
+
+
+
+    processingSteps.forEach((_, index) => {
+
+
+      setTimeout(() => {
+
+
+        setCompletedSteps((previous) => [
+
+          ...previous,
+
+          index,
+
+        ]);
+
+
+      }, (index + 1) * 400);
+
+
+    });
+
 
 
     setTimeout(() => {
@@ -126,17 +198,20 @@ function SearchDemo() {
 
         ],
 
-
       });
+
 
 
       setLoading(false);
 
 
-    }, 1200);
+
+    }, 1600);
 
 
   };
+
+
 
 
 
@@ -146,6 +221,7 @@ function SearchDemo() {
 
 
       <div className="search-header">
+
 
         <p>
           ASK ATLAS AI
@@ -158,6 +234,8 @@ function SearchDemo() {
 
 
       </div>
+
+
 
 
 
@@ -177,12 +255,16 @@ function SearchDemo() {
         />
 
 
+
         <button onClick={handleSearch}>
+
           Search
+
         </button>
 
 
       </div>
+
 
 
 
@@ -192,9 +274,44 @@ function SearchDemo() {
 
         {loading ? (
 
-          <h3>
-            Atlas AI is analyzing your knowledge base...
-          </h3>
+
+          <div className="ai-loading">
+
+
+            <h3>
+              Atlas AI is analyzing...
+            </h3>
+
+
+
+            {processingSteps.map((step, index) => (
+
+
+              <p key={step}>
+
+
+                {completedSteps.includes(index)
+
+                  ? "✓"
+
+                  : "○"
+
+                }
+
+
+                {" "}
+
+                {step}
+
+
+              </p>
+
+
+            ))}
+
+
+
+          </div>
 
 
         ) : (
@@ -208,9 +325,11 @@ function SearchDemo() {
             </h3>
 
 
+
             <p>
               {result.answer}
             </p>
+
 
 
 
@@ -234,6 +353,7 @@ function SearchDemo() {
 
 
 
+
             <div className="sources">
 
 
@@ -245,15 +365,20 @@ function SearchDemo() {
 
               {result.sources.map((source) => (
 
+
                 <div key={source.name}>
+
 
                   📄 <strong>{source.name}</strong>
 
+
                   <br />
+
 
                   <span>
                     {source.detail}
                   </span>
+
 
                 </div>
 
@@ -261,8 +386,9 @@ function SearchDemo() {
               ))}
 
 
-
             </div>
+
+
 
 
 
@@ -279,6 +405,7 @@ function SearchDemo() {
 
 
               {result.reasoning.map((item) => (
+
 
                 <div key={item}>
 
@@ -297,6 +424,8 @@ function SearchDemo() {
 
 
 
+
+
             <div className="recommendations">
 
 
@@ -309,17 +438,20 @@ function SearchDemo() {
 
               {result.recommendations.map((item) => (
 
+
                 <div key={item}>
 
                   →
+
                   {" "}
+
                   {item}
+
 
                 </div>
 
 
               ))}
-
 
 
             </div>
@@ -335,13 +467,12 @@ function SearchDemo() {
       </div>
 
 
-
     </section>
+
 
   );
 
 }
-
 
 
 export default SearchDemo;

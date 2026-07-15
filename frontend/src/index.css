@@ -1,29 +1,146 @@
 :root {
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
 
-  background: #050816;
-  color: #ffffff;
+  /* =========================
+     Atlas AI Design System
+  ========================= */
 
-  line-height: 1.5;
-  font-weight: 400;
+
+  /* Background */
+
+  --bg-primary: #050816;
+
+
+
+  /* Brand Colors */
+
+  --primary: #2563eb;
+
+  --primary-light: #60a5fa;
+
+
+
+  /* Text */
+
+  --text-primary: #ffffff;
+
+  --text-secondary: #a7b0c0;
+
+  --text-muted: #94a3b8;
+
+
+
+  /* Surfaces */
+
+  --surface: rgba(255,255,255,0.05);
+
+  --surface-dark: rgba(5,8,22,0.8);
+
+
+
+  /* Borders */
+
+  --border:
+    rgba(255,255,255,0.1);
+
+  --border-soft:
+    rgba(255,255,255,0.08);
+
+
+
+  /* Effects */
+
+  --blur:
+    blur(12px);
+
+
+
+  /* Radius */
+
+  --radius-sm: 8px;
+
+  --radius-md: 14px;
+
+  --radius-lg: 18px;
+
 }
+
+
 
 * {
+
   box-sizing: border-box;
+
 }
+
+
+
+html {
+
+  scroll-behavior: smooth;
+
+}
+
+
 
 body {
+
   margin: 0;
+
   min-width: 320px;
-  background: #050816;
+
+  min-height: 100vh;
+
+
+  background: var(--bg-primary);
+
+  color: var(--text-primary);
+
+
+  font-family:
+
+    Inter,
+
+    system-ui,
+
+    -apple-system,
+
+    BlinkMacSystemFont,
+
+    "Segoe UI",
+
+    sans-serif;
+
+
+  -webkit-font-smoothing: antialiased;
+
+  -moz-osx-font-smoothing: grayscale;
+
 }
 
-button {
+
+
+button,
+
+input {
+
   font-family: inherit;
+
+}
+
+
+
+button {
+
+  cursor: pointer;
+
+}
+
+
+
+a {
+
+  color: inherit;
+
+  text-decoration: none;
+
 }

@@ -1,8 +1,9 @@
+import { motion } from "framer-motion";
+
 type HeroButton = {
   label: string;
   variant: "primary" | "secondary";
 };
-
 
 const heroContent = {
   tagline: "AI-NATIVE ENTERPRISE SEARCH",
@@ -13,7 +14,6 @@ const heroContent = {
   description:
     "Atlas AI connects your organization's knowledge, understands context, and delivers explainable answers before you even ask.",
 };
-
 
 const heroButtons: HeroButton[] = [
   {
@@ -26,43 +26,89 @@ const heroButtons: HeroButton[] = [
   },
 ];
 
-
 function Hero() {
   return (
-    <section className="hero">
-
-      <p className="hero-tagline">
+    <motion.section
+      className="hero"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.8,
+        ease: "easeOut",
+      }}
+    >
+      <motion.p
+        className="hero-tagline"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          delay: 0.2,
+        }}
+      >
         {heroContent.tagline}
-      </p>
+      </motion.p>
 
-
-      <h1 className="hero-title">
+      <motion.h1
+        className="hero-title"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 0.6,
+        }}
+      >
         {heroContent.title}
-      </h1>
+      </motion.h1>
 
-
-      <p className="hero-description">
+      <motion.p
+        className="hero-description"
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.45,
+          duration: 0.6,
+        }}
+      >
         {heroContent.description}
-      </p>
+      </motion.p>
 
-
-      <div className="hero-buttons">
-
-        {heroButtons.map((button) => (
-          <button
+      <motion.div
+        className="hero-buttons"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          delay: 0.6,
+        }}
+      >
+        {heroButtons.map((button, index) => (
+          <motion.button
             key={button.label}
             className={`hero-button ${button.variant}`}
+            whileHover={{
+              y: -2,
+              scale: 1.02,
+            }}
+            whileTap={{
+              scale: 0.98,
+            }}
+            initial={{
+              opacity: 0,
+              y: 10,
+            }}
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              delay: 0.7 + index * 0.1,
+            }}
           >
             {button.label}
-          </button>
+          </motion.button>
         ))}
-
-      </div>
-
-
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }
-
 
 export default Hero;
