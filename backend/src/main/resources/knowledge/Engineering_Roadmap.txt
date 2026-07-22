@@ -1,0 +1,10 @@
+Engineering Roadmap
+
+Upcoming priorities include:
+
+- Semantic Search
+- AI Recommendations
+- Document Intelligence
+- Vector Search Integration
+- Enterprise Authentication
+- Performance Optimization
