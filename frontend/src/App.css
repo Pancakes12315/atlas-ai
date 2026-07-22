@@ -568,6 +568,8 @@ body {
 
 .answer-card {
 
+  animation: fadeUp .45s ease;
+
   margin-top:32px;
 
 
@@ -1160,5 +1162,299 @@ body {
   cursor: not-allowed;
 
   transform: none;
+
+}
+
+/* =========================
+   Enterprise Source Cards
+========================= */
+
+.source-card {
+
+  transition:
+
+  transform .25s ease,
+
+  box-shadow .25s ease;
+
+  margin-top: 18px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  opacity: 0;
+
+  animation: fadeUp .45s ease forwards;
+
+  background: rgba(255,255,255,0.05);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  transition:
+    transform .25s ease,
+    border-color .25s ease,
+    background .25s ease;
+
+}
+
+.source-card:nth-child(2) {
+
+  animation-delay: .10s;
+
+}
+
+.source-card:nth-child(3) {
+
+  animation-delay: .20s;
+
+}
+
+.source-card:nth-child(4) {
+
+  animation-delay: .30s;
+
+}
+
+.source-card:hover {
+
+  transform: translateY(-4px);
+
+  border-color: rgba(96,165,250,.35);
+
+  background: rgba(255,255,255,.08);
+
+  box-shadow: 0 12px 30px rgba(37,99,235,.15);
+
+}
+
+.source-card h5 {
+
+  margin: 0;
+
+  font-size: 17px;
+
+  color: white;
+
+}
+
+.source-card p {
+
+  margin: 12px 0;
+
+  color: #a7b0c0;
+
+}
+
+.source-meta {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 18px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  font-size: 13px;
+
+  color: #94a3b8;
+
+}
+
+.source-meta span:last-child {
+
+  color: #60a5fa;
+
+  font-weight: 600;
+
+}
+
+/* =========================
+   Confidence Meter
+========================= */
+
+.confidence {
+
+  margin-top: 36px;
+
+}
+
+
+.confidence h4 {
+
+  margin-bottom: 14px;
+
+}
+
+
+.confidence-bar {
+
+  width: 100%;
+
+  height: 10px;
+
+  overflow: hidden;
+
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.08);
+
+}
+
+
+.confidence-fill {
+
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: linear-gradient(
+    90deg,
+    #2563eb,
+    #60a5fa
+  );
+
+  transition: width .8s ease;
+
+}
+
+
+/* NEW: Controls spacing + alignment */
+
+.confidence-info {
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  margin-top: 15px;
+
+}
+
+
+.confidence-score {
+
+  font-size: 25px;
+
+  font-weight: 700;
+
+  color: white;
+
+  line-height: 1;
+
+}
+
+
+.confidence-level {
+
+  margin-top: 10px;
+
+  color: #60a5fa;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+}
+
+/* =========================
+   AI Thinking Animation
+========================= */
+
+
+.ai-thinking {
+
+  padding: 30px;
+
+}
+
+
+.ai-thinking h3 {
+
+  margin-bottom: 24px;
+
+}
+
+
+
+.thinking-steps {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+
+}
+
+
+
+.thinking-step {
+
+  color: #64748b;
+
+  font-size: 15px;
+
+  transition: all .3s ease;
+
+}
+
+
+
+.thinking-step span {
+
+  display: inline-flex;
+
+  width: 24px;
+
+  margin-right: 10px;
+
+}
+
+
+
+.thinking-step.active {
+
+  color: white;
+
+}
+
+
+.thinking-step.active span {
+
+  color: #60a5fa;
+
+  font-weight: 700;
+
+}
+
+/* =========================
+   Animations
+========================= */
+
+@keyframes fadeUp {
+
+  from {
+
+    opacity: 0;
+
+    transform: translateY(16px);
+
+  }
+
+  to {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+  }
 
 }

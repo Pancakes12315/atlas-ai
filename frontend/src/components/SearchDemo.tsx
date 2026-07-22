@@ -1,30 +1,52 @@
 import { useState } from "react";
 
 
-const defaultResult = {
+type Source = {
+  name: string;
+  section: string;
+  updated: string;
+  relevance: number;
+};
+
+
+type SearchResult = {
+  answer: string;
+  confidence: number;
+  sources: Source[];
+  reasoning: string[];
+  recommendations: string[];
+};
+
+
+
+const defaultResult: SearchResult = {
 
   answer:
     "The Q3 marketing strategy focuses on improving customer acquisition, expanding enterprise partnerships, and increasing product adoption.",
 
-
   confidence: 94,
-
 
   sources: [
 
     {
       name: "Marketing Strategy Q3.pdf",
-      detail: "Section: Campaign Strategy • Updated 3 days ago",
+      section: "Campaign Strategy",
+      updated: "3 days ago",
+      relevance: 98,
     },
 
     {
       name: "Growth Plan 2026.docx",
-      detail: "Section: Enterprise Expansion Goals",
+      section: "Enterprise Expansion",
+      updated: "1 week ago",
+      relevance: 94,
     },
 
     {
       name: "Team Meeting Notes",
-      detail: "Discussion: Product Growth Planning",
+      section: "Product Growth Planning",
+      updated: "Today",
+      relevance: 90,
     },
 
   ],
@@ -55,15 +77,18 @@ const defaultResult = {
 
 
 
-const analysisSteps = [
+const thinkingSteps = [
 
-  "Searching company documents",
+  "Understanding your request",
 
-  "Comparing related knowledge",
+  "Searching organizational knowledge",
 
-  "Generating contextual answer",
+  "Ranking relevant documents",
+
+  "Generating AI response",
 
 ];
+
 
 
 
@@ -75,116 +100,145 @@ function SearchDemo() {
   );
 
 
-  const [result, setResult] = useState(defaultResult);
+  const [result, setResult] =
+    useState<SearchResult>(defaultResult);
 
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] =
+    useState(false);
 
 
-  const [step, setStep] = useState(0);
+  const [thinkingStep, setThinkingStep] =
+    useState(-1);
 
 
 
-  const handleSearch = () => {
+
+  const handleSearch = async () => {
 
 
     setLoading(true);
 
-    setStep(0);
+    setThinkingStep(0);
 
 
 
-    const interval = setInterval(() => {
+    const timers = [
 
+      setTimeout(() => {
 
-      setStep((current) => {
+        setThinkingStep(1);
 
-
-        if (current < analysisSteps.length - 1) {
-
-          return current + 1;
-
-        }
-
-
-        return current;
-
-      });
-
-
-    }, 400);
+      }, 700),
 
 
 
-    setTimeout(() => {
+      setTimeout(() => {
+
+        setThinkingStep(2);
+
+      }, 1400),
 
 
-      clearInterval(interval);
+
+      setTimeout(() => {
+
+        setThinkingStep(3);
+
+      }, 2100),
+
+    ];
 
 
 
-      setResult({
 
-        answer:
-          `Atlas AI found information related to "${query}". The system analyzed company documents and identified relevant knowledge sources.`,
+    try {
 
 
-        confidence: 91,
+      const response = await fetch(
+
+        `http://localhost:8080/api/search?query=${encodeURIComponent(query)}`
+
+      );
 
 
-        sources: [
 
-          {
-            name: "Company Knowledge Base",
-            detail: "Multiple matching documents found",
-          },
+      if (!response.ok) {
 
-          {
-            name: "Project Documentation",
-            detail: "Related team discussions identified",
-          },
+        throw new Error(
+          "Search request failed"
+        );
 
-        ],
+      }
 
 
-        reasoning: [
 
-          "Analyzed semantic similarity between documents",
-
-          "Found related organizational knowledge",
-
-          "Ranked the most relevant information",
-
-        ],
+      const data: SearchResult =
+        await response.json();
 
 
-        recommendations: [
 
-          "Review related documents",
+      await new Promise(resolve =>
+        setTimeout(resolve, 1500)
+      );
 
-          "Explore similar projects",
 
-          "Ask a follow-up question",
 
-        ],
+      setResult(data);
 
-      });
 
+
+    } catch (error) {
+
+
+      console.error(
+        "Search failed:",
+        error
+      );
+
+
+
+    } finally {
+
+
+      timers.forEach(clearTimeout);
 
 
       setLoading(false);
 
 
-    }, 1800);
+      setThinkingStep(-1);
+
+
+    }
 
 
   };
 
 
 
+
+  const confidenceLabel =
+
+    result.confidence >= 90
+
+      ? "High Confidence"
+
+      : result.confidence >= 75
+
+      ? "Medium Confidence"
+
+      : "Low Confidence";
+
+
+
+
+
+
   return (
 
     <section className="search-demo">
+
 
 
       <div className="search-header">
@@ -205,7 +259,9 @@ function SearchDemo() {
 
 
 
+
       <div className="search-box">
+
 
 
         <input
@@ -222,17 +278,12 @@ function SearchDemo() {
 
 
 
-        <button
+        <button onClick={handleSearch}>
 
-          onClick={handleSearch}
-
-          disabled={loading}
-
-        >
-
-          {loading ? "Searching..." : "Search"}
+          Search
 
         </button>
+
 
 
       </div>
@@ -240,58 +291,111 @@ function SearchDemo() {
 
 
 
+
       <div className="answer-card">
+
 
 
         {loading ? (
 
 
-          <>
+
+          <div className="ai-thinking">
+
+
 
             <h3>
-              Atlas AI is analyzing your knowledge base...
+
+              ✨ Atlas AI is thinking
+
             </h3>
 
 
 
-            <div className="analysis-steps">
+
+            <div className="thinking-steps">
 
 
-              {analysisSteps.map((item, index) => (
 
-                <p key={item}>
+              {thinkingSteps.map((step, index) => (
 
-                  {index <= step ? "✓" : "○"}
 
-                  {" "}
 
-                  {item}
+                <div
 
-                </p>
+                  key={step}
+
+                  className={
+
+                    index <= thinkingStep
+
+                      ? "thinking-step active"
+
+                      : "thinking-step"
+
+                  }
+
+                >
+
+
+
+                  <span>
+
+                    {index <= thinkingStep
+
+                      ? "✓"
+
+                      : "○"}
+
+                  </span>
+
+
+
+                  {step}
+
+
+
+                </div>
+
+
 
               ))}
+
 
 
             </div>
 
 
-          </>
+
+          </div>
+
+
 
 
         ) : (
 
 
+
           <>
 
 
+
             <h3>
+
               Atlas AI Answer
+
             </h3>
 
 
+
+
             <p>
+
               {result.answer}
+
             </p>
+
+
 
 
 
@@ -299,17 +403,69 @@ function SearchDemo() {
             <div className="confidence">
 
 
+
               <h4>
+
                 Answer Confidence
+
               </h4>
 
 
-              <p>
-                {result.confidence}%
-              </p>
+
+
+              <div className="confidence-bar">
+
+
+
+                <div
+
+                  className="confidence-fill"
+
+                  style={{
+
+                    width:
+                      `${result.confidence}%`,
+
+                  }}
+
+                />
+
+
+
+              </div>
+
+
+
+
+
+              <div className="confidence-info">
+
+
+
+                <div className="confidence-score">
+
+                  {result.confidence}%
+
+                </div>
+
+
+
+                <div className="confidence-level">
+
+                  {confidenceLabel}
+
+                </div>
+
+
+
+              </div>
+
 
 
             </div>
+
+
+
 
 
 
@@ -318,31 +474,85 @@ function SearchDemo() {
             <div className="sources">
 
 
+
               <h4>
+
                 Sources Used
+
               </h4>
+
+
 
 
 
               {result.sources.map((source) => (
 
-                <div key={source.name}>
 
-                  📄 <strong>{source.name}</strong>
 
-                  <br />
+                <div
 
-                  <span>
-                    {source.detail}
-                  </span>
+                  key={source.name}
+
+                  className="source-card"
+
+                >
+
+
+
+                  <h5>
+
+                    📄 {source.name}
+
+                  </h5>
+
+
+
+                  <p>
+
+                    {source.section}
+
+                  </p>
+
+
+
+
+                  <div className="source-meta">
+
+
+
+                    <span>
+
+                      Updated {source.updated}
+
+                    </span>
+
+
+
+
+                    <span>
+
+                      {source.relevance}% relevance
+
+                    </span>
+
+
+
+                  </div>
+
+
 
                 </div>
+
+
 
               ))}
 
 
 
             </div>
+
+
+
 
 
 
@@ -351,13 +561,19 @@ function SearchDemo() {
             <div className="reasoning">
 
 
+
               <h4>
+
                 Why Atlas AI recommended this answer
+
               </h4>
 
 
 
+
               {result.reasoning.map((item) => (
+
+
 
                 <div key={item}>
 
@@ -365,10 +581,15 @@ function SearchDemo() {
 
                 </div>
 
+
+
               ))}
 
 
+
             </div>
+
+
 
 
 
@@ -378,24 +599,38 @@ function SearchDemo() {
             <div className="recommendations">
 
 
+
               <h4>
+
                 Recommended Actions
+
               </h4>
+
 
 
 
 
               {result.recommendations.map((item) => (
 
+
+
                 <div key={item}>
 
+
                   →
+
                   {" "}
+
                   {item}
+
+
 
                 </div>
 
+
+
               ))}
+
 
 
             </div>
@@ -405,10 +640,13 @@ function SearchDemo() {
           </>
 
 
+
         )}
 
 
+
       </div>
+
 
 
     </section>
