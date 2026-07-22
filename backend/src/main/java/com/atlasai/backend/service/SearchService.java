@@ -3,11 +3,13 @@ package com.atlasai.backend.service;
 
 import com.atlasai.backend.model.SearchResponse;
 import com.atlasai.backend.model.Source;
+import com.atlasai.backend.model.RankedDocument;
 
 import org.springframework.stereotype.Service;
 
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -34,56 +36,48 @@ public class SearchService {
     public SearchResponse search(String query) {
 
 
-        List<KnowledgeBaseService.Document> documents =
-                knowledgeBaseService.getDocuments();
+        List<RankedDocument> rankedDocuments =
+                knowledgeBaseService
+                        .getDocuments()
+                        .stream()
+                        .map(document ->
+                                new RankedDocument(
+                                        document.getName(),
+                                        document.getContent(),
+                                        calculateScore(
+                                                query,
+                                                document.getContent()
+                                        )
+                                )
+                        )
+                        .filter(document ->
+                                document.getScore() > 0
+                        )
+                        .sorted(
+                                Comparator.comparingInt(
+                                        RankedDocument::getScore
+                                ).reversed()
+                        )
+                        .toList();
 
-
-
-        List<KnowledgeBaseService.Document> matches =
-                new ArrayList<>();
-
-
-
-        String normalizedQuery =
-                query.toLowerCase();
-
-
-
-
-        for (
-                KnowledgeBaseService.Document document 
-                : documents
-        ) {
-
-
-            if (
-                document.getContent()
-                        .toLowerCase()
-                        .contains(normalizedQuery)
-            ) {
-
-
-                matches.add(document);
-
-            }
-
-
-        }
 
 
 
 
         List<Source> sources =
-                matches.stream()
+                rankedDocuments
+                        .stream()
+                        .limit(3)
                         .map(document ->
                                 new Source(
                                         document.getName(),
                                         "Knowledge Base Document",
                                         "Recently Updated",
-                                        95
+                                        document.getScore()
                                 )
                         )
                         .toList();
+
 
 
 
@@ -93,14 +87,19 @@ public class SearchService {
 
 
 
-        if (!matches.isEmpty()) {
+        if (!rankedDocuments.isEmpty()) {
+
+
+            RankedDocument top =
+                    rankedDocuments.get(0);
+
 
 
             answer =
                     "Atlas AI found relevant information from "
-                    + matches.get(0).getName()
+                    + top.getName()
                     + ". "
-                    + summarize(matches.get(0).getContent());
+                    + summarize(top.getContent());
 
 
 
@@ -108,9 +107,9 @@ public class SearchService {
 
 
             answer =
-                    "Atlas AI could not find an exact match for \""
+                    "Atlas AI could not find relevant information for \""
                     + query
-                    + "\". Try refining your search.";
+                    + "\".";
 
         }
 
@@ -123,27 +122,23 @@ public class SearchService {
 
                 answer,
 
-
-                matches.isEmpty()
-                        ? 60
-                        : 95,
-
+                rankedDocuments.isEmpty()
+                        ? 50
+                        : rankedDocuments.get(0).getScore(),
 
 
                 sources,
 
 
-
                 List.of(
 
-                        "Searched company knowledge documents",
+                        "Analyzed document relevance",
 
-                        "Matched relevant text content",
+                        "Compared query keywords",
 
-                        "Ranked documents by keyword relevance"
+                        "Ranked knowledge sources"
 
                 ),
-
 
 
                 List.of(
@@ -165,10 +160,65 @@ public class SearchService {
 
 
 
-    private String summarize(String content) {
 
 
-        if (content.length() <= 180) {
+    private int calculateScore(
+            String query,
+            String content
+    ) {
+
+
+        String[] words =
+                query.toLowerCase()
+                        .split("\\s+");
+
+
+
+        String document =
+                content.toLowerCase();
+
+
+
+        int matches = 0;
+
+
+
+        for(String word : words) {
+
+
+            if(document.contains(word)) {
+
+                matches++;
+
+            }
+
+        }
+
+
+
+        if(words.length == 0) {
+
+            return 0;
+
+        }
+
+
+
+        return (matches * 100) / words.length;
+
+
+    }
+
+
+
+
+
+    private String summarize(
+            String content
+    ) {
+
+
+        if(content.length() <= 180) {
 
             return content;
 
