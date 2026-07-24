@@ -19,15 +19,16 @@ public class SearchService {
 
 
     private final KnowledgeBaseService knowledgeBaseService;
+    private final ContextBuilderService contextBuilderService;
 
 
 
     public SearchService(
-            KnowledgeBaseService knowledgeBaseService
+        KnowledgeBaseService knowledgeBaseService,
+        ContextBuilderService contextBuilderService
     ) {
-
-        this.knowledgeBaseService = knowledgeBaseService;
-
+    this.knowledgeBaseService = knowledgeBaseService;
+    this.contextBuilderService = contextBuilderService;
     }
 
 
@@ -90,16 +91,24 @@ public class SearchService {
         if (!rankedDocuments.isEmpty()) {
 
 
-            RankedDocument top =
-                    rankedDocuments.get(0);
+            List<RankedDocument> topDocuments =
+                rankedDocuments.stream()
+                        .limit(3)
+                        .toList();
 
+                String context =
+                contextBuilderService.buildContext(
+                        topDocuments,
+                        query
+                );
 
-
-            answer =
-                    "Atlas AI found relevant information from "
-                    + top.getName()
-                    + ". "
-                    + summarize(top.getContent());
+                answer =
+                        "Atlas AI synthesized information from "
+                        + topDocuments.size()
+                        + " relevant document"
+                        + (topDocuments.size() > 1 ? "s" : "")
+                        + ".\n\n"
+                        + summarize(context);
 
 
 
