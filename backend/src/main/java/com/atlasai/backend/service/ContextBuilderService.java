@@ -56,6 +56,35 @@ public class ContextBuilderService {
                         .reversed()
         );
 
+        int highestScore = chunks.isEmpty()
+        ? 0
+        : chunks.get(0).getScore();
+
+        if (highestScore == 0) {
+
+            StringBuilder fallback = new StringBuilder();
+
+            fallback.append(
+                    "No exact match was found for your search.\n\n"
+            );
+
+            fallback.append(
+                    "You may find these documents helpful:\n\n"
+            );
+
+            documents.stream()
+                    .limit(3)
+                    .forEach(document ->
+
+                            fallback.append("• ")
+                                    .append(document.getName())
+                                    .append("\n")
+
+                    );
+
+            return fallback.toString();
+
+        }
         StringBuilder context = new StringBuilder();
 
         chunks.stream()
